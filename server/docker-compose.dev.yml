@@ -1,0 +1,38 @@
+version: '3'
+
+networks:
+  kerberos_network:
+    driver: bridge
+
+services:
+    db_kerberos:
+        container_name: db_kerberos
+        image: "postgres:11.4"
+        environment:
+            - POSTGRES_PASSWORD=kerberos
+            - POSTGRES_USER=kerberos
+            - POSTGRES_DB=kerberos
+        ports:
+            - 5432:5432
+        volumes:
+            - "./db:/db"
+        networks:
+            - kerberos_network
+
+    kerberos:
+        networks:
+            - kerberos_network
+        environment:
+            DB_HOST: "db_kerberos"
+            DATABASE_URL: "kerberos"
+            DB_DATABASE: "kerberos"
+            DB_USER: "kerberos"
+            DB_PASSWORD: "kerberos"
+            DB_PORT: 5432
+        links:
+            - db_kerberos
+        depends_on:
+            - db_kerberos
+
+volumes:
+  db:

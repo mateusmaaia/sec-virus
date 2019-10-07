@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+    kerberos:
+        container_name: kerberos
+        tty: true
+        stdin_open: true
+        image: "mateusmaaia/kerberos"
+        build: .
+        command: "npm run dev"
+        volumes:
+            - "./:/app"
+        ports:
+            - 5052:5052
+            - 9225:9225

@@ -1,0 +1,16 @@
+node_modules
+.git
+.sonar
+deploy
+.circleci
+.github
+docs
+.vscode
+.env.example
+Makefile
+sonar-project.template.properties
+*.md
+.gitignore
+docker-compose.dev.yml
+docker-compose.yml
+.editorconfig

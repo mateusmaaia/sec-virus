@@ -1,0 +1,14 @@
+#To see more info about this -> https://github.com/krakenjs/meddleware#options
+#Please keep the order here, the lowest priority order first
+helmet:
+  enabled: true
+  priority: 10
+  module: helmet
+enrouten:
+  enabled: true
+  priority: 50
+  module:
+    name: express-enrouten
+    arguments:
+      - directory: path:./routes
+        index: path:./routes
