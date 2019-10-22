@@ -32,7 +32,4 @@ if echo $password | sudo -S true 2>/dev/null; then
     |         [_____] []|
     |         [_____] []|
     L___________________J"
-else
-    echo ""
-    echo "Sorry, try again"
 fi
